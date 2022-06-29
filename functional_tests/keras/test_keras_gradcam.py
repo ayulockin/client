@@ -12,10 +12,15 @@ y = np.random.randint(10, size=(100,))
 simple_dataset = (x, y)
 
 # tf.data.Dataset
+def parse_data(x, y):
+    x = tf.image.convert_image_dtype(x, dtype=tf.float32)
+    return x, y
+
 train_ds = tf.data.Dataset.from_tensor_slices((x, y))
 trainloader = (
     train_ds
     .shuffle(32)
+    .map(parse_data, num_parallel_calls=tf.data.AUTOTUNE)
     .batch(32)
     .prefetch(tf.data.AUTOTUNE)
 )
@@ -45,4 +50,4 @@ model = get_functional_model()
 
 # tf.data.Dataset
 _ = model.fit(trainloader,
-             epochs=2, callbacks=[WandbCallback(validate_data=trainloader, log_evaluation=True, validation_steps=2)])
+             epochs=2, callbacks=[WandbCallback(generator=iter(trainloader), log_evaluation=True, validation_steps=2, log_evaluation_frequency=1)])

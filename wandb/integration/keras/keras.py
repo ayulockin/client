@@ -17,6 +17,8 @@ from wandb.sdk.integration_utils.data_logging import ValidationDataLogger
 from wandb.sdk.lib.deprecate import deprecate, Deprecated
 from wandb.util import add_import_hook
 
+from .explain import GradCAM
+
 import tensorflow as tf
 import tensorflow.keras.backend as K
 
@@ -386,6 +388,7 @@ class WandbCallback(tf.keras.callbacks.Callback):
         prediction_row_processor=None,
         infer_missing_processors=True,
         log_evaluation_frequency=0,
+        clf_explain=[],
         **kwargs,
     ):
         if wandb.run is None:
@@ -498,6 +501,11 @@ class WandbCallback(tf.keras.callbacks.Callback):
         self._log_evaluation_frequency = log_evaluation_frequency
         self._model_trained_since_last_eval = False
 
+        self.clf_explain = clf_explain
+        for explain in self.clf_explain:
+            if isinstance(explain, GradCAM):
+                pass
+
     def _build_grad_accumulator_model(self):
         inputs = self.model.inputs
         outputs = self.model(inputs)
@@ -539,13 +547,15 @@ class WandbCallback(tf.keras.callbacks.Callback):
                 if not self.model:
                     wandb.termwarn("WandbCallback unable to read model from trainer")
                 else:
-                    self._validation_data_logger.log_predictions(
+                    pred_table = self._validation_data_logger.log_predictions(
                         predictions=self._validation_data_logger.make_predictions(
                             self.model.predict
                         ),
                         commit=commit,
                     )
                     self._model_trained_since_last_eval = False
+
+                    return pred_table
             except Exception as e:
                 wandb.termwarn("Error durring prediction logging for epoch: " + str(e))
 
@@ -573,11 +583,28 @@ class WandbCallback(tf.keras.callbacks.Callback):
                     commit=False,
                 )
 
+        pred_table = None
         if (
             self._log_evaluation_frequency > 0
             and epoch % self._log_evaluation_frequency == 0
         ):
-            self._attempt_evaluation_log(commit=False)
+            pred_table = self._attempt_evaluation_log(commit=False)
+
+        if (
+            len(self.clf_explain) > 0
+            and isinstance(pred_table, wandb.data_types.Table)
+        ):
+            input_data = self._validation_data_logger.validation_inputs
+            input_target = self._validation_data_logger.validation_targets
+            # Check if the input is 2d image
+            
+
+            explain_table = wandb.Table(columns=[], data=[])
+
+            for explain in self.clf_explain:
+                if isinstance(explain, GradCAM):
+                    heatmaps = explain.get_gradcam(input_data)
+
 
         wandb.log({"epoch": epoch}, commit=False)
         wandb.log(logs, commit=True)
