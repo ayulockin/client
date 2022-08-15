@@ -1,7 +1,6 @@
 import wandb
 from typing import Optional
 
-import tensorflow as tf
 from tensorflow.keras import callbacks
 
 from ..keras import patch_tf_keras
@@ -11,7 +10,8 @@ patch_tf_keras()
 
 
 class WandBMetricsLogger(callbacks.Callback):
-    def __init__(self, log_batch_frequency: Optional[int] = None):
+    def __init__(self, log_batch_frequency: Optional[int] = None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.log_batch_frequency = log_batch_frequency
 
     def on_epoch_end(self, epoch, logs={}):

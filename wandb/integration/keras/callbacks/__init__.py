@@ -1,1 +1,2 @@
 from .metrics_logger import WandBMetricsLogger
+from .model_checkpoint import WandbModelCheckpointCallback
