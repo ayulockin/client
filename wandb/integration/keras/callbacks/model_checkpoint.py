@@ -2,7 +2,7 @@ import os
 import wandb
 import shutil
 
-from keras import callbacks
+from tensorflow.keras import callbacks
 
 from ..keras import patch_tf_keras
 
