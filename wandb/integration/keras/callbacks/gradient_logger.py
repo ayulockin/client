@@ -46,7 +46,7 @@ class WandbGradientLogger(tf.keras.callbacks.Callback):
             else self.model.inputs
         )
         outputs = self.model(inputs)
-        grad_acc_model = models.Model(inputs, outputs)
+        grad_acc_model = keras.Model(inputs, outputs)
         grad_acc_model.compile(loss=self.model.loss, optimizer=_CustomOptimizer())
 
         # make sure magic doesn't think this is a user model
