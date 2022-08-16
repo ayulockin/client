@@ -9,10 +9,12 @@ from wandb.integration.keras import WandbCallback  # type: ignore
 from wandb.integration.keras import WandBMetricsLogger  # type: ignore
 from wandb.integration.keras import WandbModelCheckpointCallback  # type: ignore
 from wandb.integration.keras import WandbGradientLogger  # type: ignore
+from wandb.integration.keras import ModelLogger  # type: ignore
 
 __all__ = [
     "WandbCallback",
     "WandBMetricsLogger",
     "WandbModelCheckpointCallback",
     "WandbGradientLogger",
+    "ModelLogger"
 ]

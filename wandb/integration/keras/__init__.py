@@ -8,6 +8,13 @@ from .keras import WandbCallback
 from .callbacks import WandBMetricsLogger
 from .callbacks import WandbModelCheckpointCallback
 from .callbacks import WandbGradientLogger
+from .callbacks import ModelLogger
 
 
-__all__ = ["WandbCallback", "WandBMetricsLogger", "WandbModelCheckpointCallback", "WandbGradientLogger"]
+__all__ = [
+    "WandbCallback",
+    "WandBMetricsLogger",
+    "WandbModelCheckpointCallback",
+    "WandbGradientLogger",
+    "ModelLogger",
+]
