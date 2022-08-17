@@ -8,7 +8,7 @@ from ..keras import patch_tf_keras
 patch_tf_keras()
 
 
-class ModelLogger(callbacks.Callback):
+class WandbModelLogger(callbacks.Callback):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._graph_rendered = False
