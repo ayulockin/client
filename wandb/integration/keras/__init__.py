@@ -10,6 +10,7 @@ from .callbacks import WandbModelCheckpointCallback
 from .callbacks import WandbGradientLogger
 from .callbacks import WandbModelLogger
 from .callbacks import FLOPsLogger
+from .table_builder import TablesBuilder
 
 
 __all__ = [
@@ -19,4 +20,5 @@ __all__ = [
     "WandbGradientLogger",
     "WandbModelLogger",
     "FLOPsLogger",
+    "TablesBuilder"
 ]
